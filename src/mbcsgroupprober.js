@@ -47,11 +47,15 @@ function MBCSGroupProber() {
         new Big5Prober(),
         new EUCTWProber()
     ];
-    const supportedCharsetNames = (function() {
-        const charsetNames = [];
-        for (const prober of this._mProbers) {
-            charsetNames.push(prober.getCharsetName())
+    var supportedCharsetNames = (function() {
+        var charsetNames = [];
+        var arrayLength = this._mProbers.length;
+        for (var i = 0; i < arrayLength; i++) {
+            charsetNames.push(this._mProbers[i].getCharsetName())
         }
+        // for (const prober of this._mProbers) {
+        //     charsetNames.push(prober.getCharsetName())
+        // }
         return charsetNames;
     });
     this.getSupportedCharsetNames = function() {

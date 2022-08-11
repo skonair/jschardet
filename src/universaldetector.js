@@ -38,32 +38,46 @@ var Latin1Prober = require('./latin1prober');
 var EscCharSetProber = require('./escprober');
 var logger = require('./logger');
 
-const supportedEncodings = (function() {
-    const BOM_UTF = [
+var supportedEncodings = (function() {
+    var BOM_UTF = [
         "UTF-8", "UTF-32LE", "UTF-32BE", "UTF-32BE", "UTF-16LE", "UTF-16BE",
         "X-ISO-10646-UCS-4-3412", "X-ISO-10646-UCS-4-2143"
     ]
-    const probers = [
+    var probers = [
         new EscCharSetProber(),
         new MBCSGroupProber(),
         new SBCSGroupProber(),
         new Latin1Prober()
     ];
-    const encodings = BOM_UTF.slice(0);
-    for (const prober of probers) {
-        [].push.apply(encodings, prober.getSupportedCharsetNames());
+    var encodings = BOM_UTF.slice(0);
+    var arrayLength = probers.length;
+    for (var i = 0; i < arrayLength; i++) {
+        [].push.apply(encodings, probers[i].getSupportedCharsetNames());
     }
+
+    // for (const prober of probers) {
+    //     [].push.apply(encodings, prober.getSupportedCharsetNames());
+    // }
     return encodings;
 })();
 
-const supportedEncodingsDenormalized = (function() {
-    denormalizedEncodings = [];
-    for (const encoding of supportedEncodings) {
+var supportedEncodingsDenormalized = (function() {
+    var denormalizedEncodings = [];
+
+    var arrayLength = supportedEncodings.length;
+    for (var i = 0; i < arrayLength; i++) {
         denormalizedEncodings.push(
-            encoding.toLocaleLowerCase(),
-            encoding.toLocaleLowerCase().replace(/-/g, "")
+            supportedEncodings[i].toLocaleLowerCase(),
+            supportedEncodings[i].toLocaleLowerCase().replace(/-/g, "")
         );
     }
+
+    // for (const encoding of supportedEncodings) {
+    //     denormalizedEncodings.push(
+    //         encoding.toLocaleLowerCase(),
+    //         encoding.toLocaleLowerCase().replace(/-/g, "")
+    //     );
+    // }
     return denormalizedEncodings;
 })();
 
@@ -72,11 +86,18 @@ function UniversalDetector(options) {
     if (!options.minimumThreshold)  options.minimumThreshold = 0.20;
 
     if (options.detectEncodings) {
-        for (const encoding of options.detectEncodings) {
-            if (!supportedEncodingsDenormalized.includes(encoding.toLowerCase())) {
-                throw new Error(`Encoding ${encoding} is not supported. Supported encodings: ${supportedEncodings}.`);
+        var arrayLength = options.detectEncodings.length;
+        for (var i = 0; i < arrayLength; i++) {
+            if (!supportedEncodingsDenormalized.includes(options.detectEncodings[i].toLowerCase())) {
+                throw new Error("Encoding " + options.detectEncodings[i] + " is not supported. Supported encodings: " + supportedEncodings + ".");
             }
         }
+
+        // for (const encoding of options.detectEncodings) {
+        //     if (!supportedEncodingsDenormalized.includes(encoding.toLowerCase())) {
+        //         throw new Error(`Encoding ${encoding} is not supported. Supported encodings: ${supportedEncodings}.`);
+        //     }
+        // }
     }
 
     var _state = {

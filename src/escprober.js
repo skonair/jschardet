@@ -44,10 +44,15 @@ function EscCharSetProber() {
             new CodingStateMachine(escsm.ISO2022JPSMModel),
             new CodingStateMachine(escsm.ISO2022KRSMModel)
         ];
-        self._supportedCharsetNames = [];
-        for (const codingSM of self._mCodingSM) {
-            self._supportedCharsetNames.push(codingSM.getCodingStateMachine());
-        }
+        self._supportedCharsetNames = [
+            escsm.HZSMModel.name,
+            escsm.ISO2022CNSMModel.name,
+            escsm.ISO2022JPSMModel.name,
+            escsm.ISO2022KRSMModel.name
+        ];
+        // for (var codingSM of self._mCodingSM) {
+        //     self._supportedCharsetNames.push(codingSM.getCodingStateMachine());
+        // }
         self.reset();
     }
 
